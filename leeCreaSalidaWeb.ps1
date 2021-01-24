@@ -7,8 +7,11 @@
 #* Parámetros IN: nombre del fichero de entrada default "datosMBK21.csv"  
 #*
 #* Fecha modif.:  06/01/2021                                                           
-#*     Objetivo:  Generar todos los ficheros "mes a mes" y el anual con el nombre "sheetYY13.htm"
-#*Parámetros IN:  nombre del fichero de datos (default):  "datosMBK21.csv", pondremos el correspondiente al año, no es necesario que tenga cabecera
+#*     Objetivo:  Generar todos los ficheros "mes a mes" y el anual con el nombre "sheetYY13.html"
+#*Parámetros IN:  Nombre del fichero de datos (default):  "datosMBK21.csv", 
+#*                Lo cogerá de -> D:\LES008066\miData\Hostalia\bankiaAD\filesMov
+#*                Pondremos el correspondiente al año, o diferentes años ordenamos de mayor a menor por año y dentro del año por mes y día
+#*                Por defecto tomará el año en curso, como string
 #*       Salida:  D:\LES008066\miData\Hostalia\bankiaAD\salidaYYYY
 #*                         
 #**************************************************************************************************************************************************
@@ -17,7 +20,8 @@
 # -   PARÁMETROS IN    -
 #**************************************************************************************************************************************************
     Param ( 
-        [string] $nameFileIn   = "datosMBK21.csv"    
+        [string]$nameFileIn   = "datosMBKAll.csv"
+        # [string]$anoDH = (Get-date).Year 
     )
 #
 # -------------------------------------------------------------------------------------------------------------------------------------------------
@@ -30,89 +34,84 @@ Import-Module D:\LES008066\data\PS\TOOLS\write-Log.psm1
 # - FUNCTIONS - STARTS -
 # -------------------------------------------------------------------------------------------------------------------------------------------------
 #
-Function f_Head ($nameF) { 
-    #'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' | Out-File "$rutaHTML" -Encoding   UTF8
-     "<html xmlns:v=`"urn:schemas-microsoft-com:vml`""                                                                       | Out-File "$rutaHTML" -Encoding            UTF8
-       "xmlns:o=`"urn:schemas-microsoft-com:office:office`""                                                                 | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-       "xmlns:x=`"urn:schemas-microsoft-com:office:excel`""                                                                  | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-       "xmlns=`"http://www.w3.org/TR/REC-html40`">"                                                                          | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-        "<head>"                                                                                                             | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-            "<meta http-equiv=Content-Type content=`"text/html; charset=windows-1252`">"                                     | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-            "<meta name=ProgId content=Excel.Sheet>"                                                                         | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-            "<meta name=Generator content=`"Microsoft Excel 15`">"                                                           | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-            "<link id=Main-File rel=Main-File href=`"$nameF`">"                                                              | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-            "<link rel=Stylesheet href=stylesheet.css>"                                                                      | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-            "<style>"                                                                                                        | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-                '<!--table'                                                                                                  | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-   	            '    {mso-displayed-decimal-separator:"\,";'                                                                 | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-	            '    mso-displayed-thousand-separator:"\.";}'                                                                | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-                '@page'                                                                                                      | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-	            '    {margin:1.0in .75in 1.0in .75in;'                                                                       | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-	            '    mso-header-margin:.5in;'                                                                                | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-	            '    mso-footer-margin:.5in;}'                                                                               | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-                '-->'                                                                                                        | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-            '</style>'                                                                                                       | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-        '</head>'                                                                                                            | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+Function f_Head ($rutaHTML) { 
+    "<html>"                                                                                                                 | Out-File "$rutaHTML" -Encoding            UTF8
+    "   <head>"                                                                                                              | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "       <link rel=`"Stylesheet`" href=`"css/estilosHojaTabla1.css`" />"                                                  | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "   </head>"                                                                                                             | Out-File "$rutaHTML" -Append  -Encoding   UTF8
 }
 #
-Function f_IniBody ([string]$fecha) { 
-    "<body link=`"#0563C1`" vlink=`"#954F72`">"                                              | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "<table border=0 cellpadding=0 cellspacing=0 width=1080 style='border-collapse:"         | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "collapse;table-layout:fixed;width:810pt'>"                                              | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "<col width=120 span=9 style='mso-width-source:userset;mso-width-alt:4388; width:90pt'>" | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+Function f_IniBody ($rutaHTML, $t) { 
+    "   <body link=`"#0563C1`" vlink=`"#954F72`">"                                                                           | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "       <table class=`"tabla1`">"                                                                                        | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "           <caption>$t</caption>"                                                                                       | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "           <thead>"                                                                                                     | Out-File "$rutaHTML" -Append  -Encoding   UTF8      
 }
 #
 # FECHA;FEC. VALOR;DESCRIPCION;IMPORTE;DIV.;SALDO;DIV.;CATEGORÍA;CONCEPTO 2;CONCEPTO 3;CONCEPTO 4;CONCEPTO 5;CONCEPTO 6;CONCEPTO 7
 # FECHA            DESCRIPCION IMPORTE      SALDO                CONCEPTO 2 CONCEPTO 3 CONCEPTO 4 CONCEPTO 5 CONCEPTO 6 CONCEPTO 7
 # $dt0,            $dt2,       $dt3,        $dt5,                $dt8,      $dt9,      $dt10,     $dt11,     $dt12,     $dt13,     $dt14
 # f_detalle $arrDat[0] $arrDat[2] $arrDat[3] $arrDat[5] $arrDat[8] $arrDat[9] $arrDat[10] $arrDat[11] $arrDat[12] $arrDat[13] $arrDat[14]  
-Function f_CabeceraTab ($dt0, $dt2, $dt3, $dt5, $dt8, $dt9, $dt10, $dt11, $dt12, $dt13, $dt14) {
-    "<tr height=21 style=`"height:15.75pt`">"                                              | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "   <td height=21 class=xl65 width=120 style='height:15.75pt;width:90pt'>$dt0</td>"    | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "   <td class=xl66 width=120 style='width:90pt'>$dt2</td>"                             | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "   <td class=xl66 width=120 style='width:90pt'>$dt3</td>"                             | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "   <td class=xl66 width=120 style='width:90pt'>$dt5</td>"                             | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "   <td class=xl66 width=120 style='width:90pt'>$dt8</td>"                             | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "   <td class=xl66 width=120 style='width:90pt'>$dt9</td>"                             | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "   <td class=xl66 width=120 style='width:90pt'>$dt10</td>"                            | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "   <td class=xl66 width=120 style='width:90pt'>$dt11</td>"                            | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "   <td class=xl66 width=120 style='width:90pt'>$dt12</td>"                            | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "</tr>"                                                                                | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+Function f_CabeceraTab ($dt0, $dt2, $dt3, $dt5, $dt8, $dt9, $dt11, $dt12, $dt13, $rutaHTML) {
+    "               <tr>"                                                                                                    | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                   <th class=`"xh1`">$dt0</th>"                                                                         | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                   <th class=`"xh2`">$dt2</th>"                                                                         | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                   <th class=`"xh3`">$dt3</th>"                                                                         | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                   <th class=`"xh4`">$dt5</th>"                                                                         | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                   <th class=`"xh5`">$dt8</th>"                                                                         | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                   <th class=`"xh6`">$dt9</th>"                                                                         | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                   <th class=`"xh7`">$dt11</th>"                                                                        | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                   <th class=`"xh8`">$dt12</th>"                                                                        | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                   <th class=`"xh9`">$dt13</th>"                                                                        | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "               </tr>"                                                                                                   | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "           </thead>"                                                                                                    | Out-File "$rutaHTML" -Append  -Encoding   UTF8 
+    "           <tbody>"                                                                                                     | Out-File "$rutaHTML" -Append  -Encoding   UTF8      
 }
 #
-Function f_Detalle ($dt0, $dt2, $dt3, $dt5, $dt8, $dt9, $dt10, $dt11, $dt12, $13, $14) {
-    "<tr height=46 style='height:34.5pt'>"                                              | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "  <td height=46 class=xl67 width=120 style='height:34.5pt;width:90pt'>$dt0</td>"   | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "  <td class=xl68 width=120 style='width:90pt'>$dt2</td>"                           | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "  <td class=xl68 width=120 style='width:90pt'>$dt3</td>"                           | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "  <td class=xl68 width=120 style='width:90pt'>$dt5</td>"                           | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "  <td class=xl68 width=120 style='width:90pt'>$dt8</td>"                           | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "  <td class=xl68 width=120 style='width:90pt'>$dt9</td>"                           | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "  <td class=xl68 width=120 style='width:90pt'>$dt11</td>"                          | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "  <td class=xl68 width=120 style='width:90pt'>$dt12</td>"                          | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "  <td class=xl68 width=120 style='width:90pt'>$dt13</td>"                          | Out-File "$rutaHTML" -Append  -Encoding   UTF8
-    "</tr>"                                                                             | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+Function f_Detalle ($dt0, $dt2, $dt3, $dt5, $dt8, $dt9, $dt11, $dt12, $dt13, $rutaHTML) {
+    "               <tr>"                                                                                                    | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                  <td class=`"xd1`">$dt0</td>"                                                                          | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                  <td class=`"xd2`">$dt2</td>"                                                                          | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                  <td class=`"xd3`">$dt3</td>"                                                                          | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                  <td class=`"xd4`">$dt5</td>"                                                                          | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                  <td class=`"xd5`">$dt8</td>"                                                                          | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                  <td class=`"xd6`">$dt9</td>"                                                                          | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                  <td class=`"xd7`">$dt11</td>"                                                                         | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                  <td class=`"xd8`">$dt12</td>"                                                                         | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "                  <td class=`"xd9`">$dt13</td>"                                                                         | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "               </tr>"                                                                                                   | Out-File "$rutaHTML" -Append  -Encoding   UTF8
 }
 #
-Function f_FinBody () { 
-    "<![if supportMisalignedColumns]>"               | Out-File $rutaHTML -Append   -Encoding   UTF8
-    "   <tr height=0 style='display:none'>"          | Out-File $rutaHTML -Append   -Encoding   UTF8
-    "       <td width=120 style='width:90pt'></td>"  | Out-File $rutaHTML -Append   -Encoding   UTF8
-    "       <td width=120 style='width:90pt'></td>"  | Out-File $rutaHTML -Append   -Encoding   UTF8
-    "       <td width=120 style='width:90pt'></td>"  | Out-File $rutaHTML -Append   -Encoding   UTF8
-    "       <td width=120 style='width:90pt'></td>"  | Out-File $rutaHTML -Append   -Encoding   UTF8
-    "       <td width=120 style='width:90pt'></td>"  | Out-File $rutaHTML -Append   -Encoding   UTF8
-    "       <td width=120 style='width:90pt'></td>"  | Out-File $rutaHTML -Append   -Encoding   UTF8
-    "       <td width=120 style='width:90pt'></td>"  | Out-File $rutaHTML -Append   -Encoding   UTF8
-    "       <td width=120 style='width:90pt'></td>"  | Out-File $rutaHTML -Append   -Encoding   UTF8
-    "       <td width=120 style='width:90pt'></td>"  | Out-File $rutaHTML -Append   -Encoding   UTF8
-    "   </tr>"                                       | Out-File $rutaHTML -Append   -Encoding   UTF8
-    "<![endif]>"                                     | Out-File $rutaHTML -Append   -Encoding   UTF8
-    "</table>"                                       | Out-File $rutaHTML -Append   -Encoding   UTF8
-    "</body>"                                        | Out-File $rutaHTML -Append   -Encoding   UTF8
-    "</html>"                                        | Out-File $rutaHTML -Append   -Encoding   UTF8
+Function f_FinBody ($rutaHTML) { 
+    "           <tbody>"                                                                                                      | Out-File "$rutaHTML" -Append   -Encoding   UTF8      
+    "       </table>"                                                                                                         | Out-File "$rutaHTML" -Append   -Encoding   UTF8
+    "   </body>"                                                                                                              | Out-File "$rutaHTML" -Append   -Encoding   UTF8
+    "</html>"                                                                                                                 | Out-File "$rutaHTML" -Append   -Encoding   UTF8
 }
 #
+Function verificarSalida ($salOut) { 
+#
+    # Validamos que exista el directorio de salida de los htm. Sí no existe lo creamos
+    if ( Test-Path $salOut ) {  # Existe el directorio de salida
+         write-log -Text "Existe el directorio:  $salOut" -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "Check-File" 
+    } else {                    # No Existe  el directorio de salida, lo creamos
+         write-log -Text " NO existe el direcorio de salida: $salOut" -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "Check-File-Error" 
+         try {
+              New-Item -Path $salOut -ItemType Directory -EA Stop
+              write-log -Text "Creamos el directorio:  $salOut" -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "Check-File" 
+         } catch {
+              write-host $error[0].Exception.GetType().FullName
+         }
+    }
+    <# 
+    if ( Test-Path "$salOut\stylesheet.css" ) {  # Existe el directorio de estilo
+         write-log -Text "Existe el fichero: $salOut\stylesheet.css" -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "Check-File" 
+    } else {
+         write-log -Text "NO existe el fichero: $salOut\stylesheet.css lo copiamo" -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "Check-File" 
+         Copy-Item -Path "$prefijo\SALIDA\stylesheet.css" -Destination $salOut    
+    }
+    #>
+}
 #
 Function daMesDe2 ([string]$md) { 
     if ($md.length -lt 2) {
@@ -121,15 +120,37 @@ Function daMesDe2 ([string]$md) {
     return $md
 }
 #
+Function calTexto ($iMes) { 
+    [string]$tRes
+    switch ($iMes) {
+         1 { $tRes = "Enero" }
+         2 { $tres = "Febrero" }
+         3 { $tres = "Marzo" }
+         4 { $tres = "Abril" }
+         5 { $tres = "Mayo" }
+         6 { $tres = "Junio" }
+         7 { $tres = "Julio" }
+         8 { $tres = "Agosto" }
+         9 { $tres = "Septiembre" }
+        10 { $tres = "Octobre" }
+        11 { $tres = "Noviembre" }
+        12 { $tres = "Diciembre" }
+        13 { $tres = "Año" } 
+        Default { $tres = "Error" }
+    }
+    return $tRes
+}
+#
 # -------------------------------------------------------------------------------------------------------------------------------------------------
 # - VARIABLES - START -
 # -------------------------------------------------------------------------------------------------------------------------------------------------
 #
-    $prefijo = "D:\LES008066\miData\Hostalia\testPS-HTML\"
-    # $fe = "MBK_" + (get-date -format "yyyymmdd").ToString() + "-" + (get-date -format "hhmm").ToString() + ".log"
-    $logDIR   = $prefijo + "LOG\"
     $LogNamePre = "LOG-MBK-"
-    $fileIn = $prefijo + "filesMov\$nameFileIn"            # Ruta dónde está el fichero de datos
+    $prefijo    = "D:\LES008066\miData\Hostalia\bankiaAD\"
+    $logDIR     = $prefijo + "LOG\"
+    $fileIn     = $prefijo + "filesMov\$nameFileIn"            # Ruta dónde está el fichero de datos
+
+    [string]$anoActual = [string](get-date).Year
 #
 # -------------------------------------------------------------------------------------------------------------------------------------------------
 # - CHEQUEOS - INICIALES -
@@ -150,40 +171,50 @@ Function daMesDe2 ([string]$md) {
 # - SCRIPT MAIN BODY - START -
 # -------------------------------------------------------------------------------------------------------------------------------------------------
 #
-$y1 = ([string](Get-Date).year).substring(2, 2) 
-$nameFile = $nameFile.replace("YY",$y1)
-[string]$anoDH = (Get-date).Year # - 1     # Quitar -1 en producción
-
-for ($i = 13; $i -gt 0; $i--) {
-    $mesDH = DAmESdE2 $i
-    $primV = 0
-    if ($mesDH -eq "13"){
-        $textoBus = "/../$anoDH"
-    } else {
-        $textoBus = "/$mesDH/$anoDH"
-    }
-    $fileDep = gc $fileIn | Select-String -Pattern $textoBus
-    if ($fileDep.count -eq 0 -and $mesDH -eq "13") {
-        exit 1             # No hay registros del año de búsqueda
-    } elseif ($fileDep.count -eq 0 -and $mesDH -lt "13") {
-        continue           # No hay registros para el mes dado de búsqueda
-    } else {
-        foreach ($datR in $fileDep) {
-            [string]$dat = $datR
-            $arrDat = $dat.split(";")
-            write-host $arrDat[0] $arrDat[2] $arrDat[3] $arrDat[5]  $arrDat[8]  $arrDat[9]  $arrDat[10]  $arrDat[11]  $arrDat[12]  $arrDat[13]  $arrDat[14] 
-            if ($primV -eq 0) {
-                    $namefile = $nameFile.Substring(0,5) + $anoDH.Substring(2,2) + $mesDH + ".htm" 
-                    $rutaHTML = $prefijo + "salida$anoDH\$nameFile"
-                    f_Head $nameFile
-                    f_IniBody 
-                    f_CabeceraTab "FECHA" "FEC. VALOR" "DESCRIPCION" "IMPORTE" "DIV." "CATEGORIA" "CONCEPTO 2" "CONCEPTO 3" "CONCEPTO 4" "CONCEPTO 5"  "CONCEPTO 6" "CONCEPTO 7"  
-                    $primV++
-            }
-            f_detalle  $arrDat[0] $arrDat[2] $arrDat[3] $arrDat[5]  $arrDat[8]  $arrDat[9]  $arrDat[10]  $arrDat[11]  $arrDat[12]  $arrDat[13]  $arrDat[14]
-        }
-        f_FinBody
-    }
+if ($anoDH -eq "" -or ($anoDH -lt "2010" -or $anoDH -gt $anoActual)) {
+    [string]$anoDH = $anoActual      # Para test forzar el año, quitar -1 en producción
 }
+# coger año actual y sumarle 1 como límite del for
+$anoInicial = 2010                              # El inicio del for debe tenr 2010, excepto para pruebas 
+[int16]$anoLim = (Get-date).Year
+for ($r = $anoInicial; $r -le $anoLim; $r++) {    
+    [string]$anoDH = $r
+    $nameFile = "sheet$anoDH" + ".html"
+    for ($i = 13; $i -gt 0; $i--) {
+        $mesDH = DAmESdE2 $i
+        $primV = 0
+        if ($mesDH -eq "13"){
+            $textoBus = "/../$anoDH"
+        } else {
+            $textoBus = "/$mesDH/$anoDH"
+        }
+        $fileDep = Get-Content $fileIn | Select-String -Pattern $textoBus
+        if ($fileDep.count -eq 0 -and $mesDH -eq "13") {
+            exit 1             # No hay registros del año de búsqueda
+        } elseif ($fileDep.count -eq 0 -and $mesDH -lt "13") {
+            continue           # No hay registros para el mes dado de búsqueda
+        } else {
+            foreach ($datR in $fileDep) {
+                [string]$dat = $datR
+                $arrDat = $dat.split(";")
+                write-host $arrDat[0] $arrDat[2] $arrDat[3] $arrDat[5]  $arrDat[8]  $arrDat[9]  $arrDat[11]  $arrDat[12]  $arrDat[13]  
+                if ($primV -eq 0) {
+                        $namefile = $nameFile.Substring(0,5) + $anoDH.Substring(2,2) + $mesDH + ".html" 
+                        $dirSalida = $prefijo  + "SALIDA\$anoDH"
+                        verificarSalida $dirSalida
+                        $rutaHTML = "$dirSalida\$nameFile"
+                        f_Head $rutaHTML
+                        $t = calTexto $i
+                        $t = "$t $anoDH" 
+                        f_IniBody $rutaHTML $t
+                        f_CabeceraTab "FECHA" "DESCRIPCION" "IMPORTE" "SALDO" "CONCEPTO 2" "CONCEPTO 3" "CONCEPTO 4" "CONCEPTO 5"  "CONCEPTO 6" $rutaHTML
+                        $primV++
+                }
+                f_detalle  $arrDat[0] $arrDat[2] $arrDat[3] $arrDat[5]  $arrDat[8]  $arrDat[9]  $arrDat[11]  $arrDat[12]  $arrDat[13] $rutaHTML
+            }
+            f_FinBody $rutaHTML
+        }
+    }
+}    
 exit 0  # Salida si errores
 # -------------------------------------------------------------------------------------------------------------------------------------------------
