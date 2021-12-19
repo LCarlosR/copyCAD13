@@ -8,11 +8,11 @@
 #*
 #* Fecha modif.:  06/01/2021                                                           
 #*     Objetivo:  Generar todos los ficheros "mes a mes" y el anual con el nombre "sheetYY13.html"
-#*Parámetros IN:  Nombre del fichero de datos (default):  "datosMBK21.csv", 
-#*                Lo cogerá de -> D:\LES008066\miData\Hostalia\bankiaAD\filesMov
+#*Parámetros IN:  Nombre del fichero de datos (default):  "datosMBK21.csv", mejor de datosMBKAll.csv
+#*                Lo cogerá de -> D:\miData\Hostalia\bankiaAD\filesMov
 #*                Pondremos el correspondiente al año, o diferentes años ordenamos de mayor a menor por año y dentro del año por mes y día
 #*                Por defecto tomará el año en curso, como string
-#*       Salida:  D:\LES008066\miData\Hostalia\bankiaAD\salidaYYYY
+#*       Salida:  D:\miData\Hostalia\bankiaAD\salida\YYYY
 #*                         
 #**************************************************************************************************************************************************
 #
@@ -28,7 +28,7 @@
 # -   IMPORT MODULES   -
 # -------------------------------------------------------------------------------------------------------------------------------------------------
 #
-Import-Module D:\LES008066\data\PS\TOOLS\write-Log.psm1
+Import-Module D:\data\PS\TOOLS\write-Log.psm1
 #
 # -------------------------------------------------------------------------------------------------------------------------------------------------
 # - FUNCTIONS - STARTS -
@@ -37,6 +37,7 @@ Import-Module D:\LES008066\data\PS\TOOLS\write-Log.psm1
 Function f_Head ($rutaHTML) { 
     "<html>"                                                                                                                 | Out-File "$rutaHTML" -Encoding            UTF8
     "   <head>"                                                                                                              | Out-File "$rutaHTML" -Append  -Encoding   UTF8
+    "       <meta name=`"robots`" content=`"noindex`" />"                                                                    | Out-File "$rutaHTML" -Append  -Encoding   UTF8
     "       <link rel=`"Stylesheet`" href=`"css/estilosHojaTabla1.css`" />"                                                  | Out-File "$rutaHTML" -Append  -Encoding   UTF8
     "   </head>"                                                                                                             | Out-File "$rutaHTML" -Append  -Encoding   UTF8
 }
@@ -146,7 +147,7 @@ Function calTexto ($iMes) {
 # -------------------------------------------------------------------------------------------------------------------------------------------------
 #
     $LogNamePre = "LOG-MBK-"
-    $prefijo    = "D:\LES008066\miData\Hostalia\bankiaAD\"
+    $prefijo    = "D:\miData\Hostalia\bankiaAD\"
     $logDIR     = $prefijo + "LOG\"
     $fileIn     = $prefijo + "filesMov\$nameFileIn"            # Ruta dónde está el fichero de datos
 
@@ -156,15 +157,16 @@ Function calTexto ($iMes) {
 # - CHEQUEOS - INICIALES -
 # -------------------------------------------------------------------------------------------------------------------------------------------------
 #   #
+write-log -Text "----------- Nuevo LOG ------- " -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "--------- Iniciamos"      
     # ---------------------------------------------------------------------------------------------------------------------------------------------
     #   Verificación de variables.
     # ---------------------------------------------------------------------------------------------------------------------------------------------
     #
     # Validamos que exista el fichero de datos
     if ( Test-Path $fileIn ) {  # Existe el fichero de configuración
-         write-log -Text "Existe el fichero:  $fileIn" -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "Check-File" 
+         write-log -Text "Existe el fichero:  $fileIn" -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "File-Datos" 
     } else { # No Existe el fichero de configuración abortamos
-         write-log -Text "Abortamos NO existe el fichero: $fileIn" -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "Check-File-Error" 
+         write-log -Text "Abortamos NO existe el fichero: $fileIn" -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "File-Datos-Error" 
          exit 3
     }    
 # -------------------------------------------------------------------------------------------------------------------------------------------------
@@ -175,8 +177,8 @@ if ($anoDH -eq "" -or ($anoDH -lt "2010" -or $anoDH -gt $anoActual)) {
     [string]$anoDH = $anoActual      # Para test forzar el año, quitar -1 en producción
 }
 # coger año actual y sumarle 1 como límite del for
-$anoInicial = 2010                              # El inicio del for debe tenr 2010, excepto para pruebas 
-[int16]$anoLim = (Get-date).Year
+$anoInicial = 2021         # El inicio del for debe tener 2010, para extraer a partir de un año concreto o bien para pruebas 
+[int16]$anoLim = (Get-date).Year    # Sí es hasta el año en curso no tocamos
 for ($r = $anoInicial; $r -le $anoLim; $r++) {    
     [string]$anoDH = $r
     $nameFile = "sheet$anoDH" + ".html"
@@ -197,10 +199,12 @@ for ($r = $anoInicial; $r -le $anoLim; $r++) {
             foreach ($datR in $fileDep) {
                 [string]$dat = $datR
                 $arrDat = $dat.split(";")
-                write-host $arrDat[0] $arrDat[2] $arrDat[3] $arrDat[5]  $arrDat[8]  $arrDat[9]  $arrDat[11]  $arrDat[12]  $arrDat[13]  
+                $dosCamp = $arrDat[10] + " " + $arrDat[11] 
+                # write-host $arrDat[0] $arrDat[2] $arrDat[3] $arrDat[5]  $arrDat[8]  $arrDat[9]  $arrDat[11]  $arrDat[12]  $arrDat[13]  
+                write-host $arrDat[0] $arrDat[2] $arrDat[3] $arrDat[5]  $arrDat[8]  $arrDat[9]  $dosCamp  $arrDat[12]  $arrDat[13]  
                 if ($primV -eq 0) {
                         $namefile = $nameFile.Substring(0,5) + $anoDH.Substring(2,2) + $mesDH + ".html" 
-                        $dirSalida = $prefijo  + "SALIDA\$anoDH"
+                        $dirSalida = $prefijo  + "HTML\salida\$anoDH"
                         verificarSalida $dirSalida
                         $rutaHTML = "$dirSalida\$nameFile"
                         f_Head $rutaHTML
@@ -210,11 +214,12 @@ for ($r = $anoInicial; $r -le $anoLim; $r++) {
                         f_CabeceraTab "FECHA" "DESCRIPCION" "IMPORTE" "SALDO" "CONCEPTO 2" "CONCEPTO 3" "CONCEPTO 4" "CONCEPTO 5"  "CONCEPTO 6" $rutaHTML
                         $primV++
                 }
-                f_detalle  $arrDat[0] $arrDat[2] $arrDat[3] $arrDat[5]  $arrDat[8]  $arrDat[9]  $arrDat[11]  $arrDat[12]  $arrDat[13] $rutaHTML
+                f_detalle  $arrDat[0] $arrDat[2] $arrDat[3] $arrDat[5]  $arrDat[8]  $arrDat[9]  $dosCamp  $arrDat[12]  $arrDat[13] $rutaHTML
             }
             f_FinBody $rutaHTML
         }
     }
-}    
+}
+write-log -Text "*********** FIN LOG ******** " -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "*************** FIN **************"  
 exit 0  # Salida si errores
 # -------------------------------------------------------------------------------------------------------------------------------------------------
