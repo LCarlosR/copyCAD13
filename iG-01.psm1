@@ -3,7 +3,8 @@
 #         PowerShell Modulo: interfazGraficas.psm1                               #
 ##################################################################################
 # Inclusión en otros PS                                                          #
-# Import-Module C:\sAutoDistribucion\SOUtil\LIB\interfazGraficas.psm1            #
+# Import-Module Producción D:\data\PS\sAutoDistribucion\SOUtil\LIB\IG-01.psm1    #
+# Import-Module Test D:\miData\Hostalia\bankiaAD\scripts\IG-01.psm1              #
 ##################################################################################
 # Llamada:                                                                       #
 # flogin                                                                         #
