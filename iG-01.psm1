@@ -1,6 +1,6 @@
 ﻿<#
 ##################################################################################
-#         PowerShell Modulo: interfazGraficas.psm1                               #
+#         PowerShell Modulo: IG-01.psm1                                          #
 ##################################################################################
 # Inclusión en otros PS                                                          #
 # Import-Module Producción D:\data\PS\sAutoDistribucion\SOUtil\LIB\IG-01.psm1    #
