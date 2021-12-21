@@ -20,13 +20,13 @@ Function Get-FileName($initialDirectory) {
     # $OpenFileDialog.filename
 }  ## End Function Get-FileName
 #
-function selDirectorio ($unidad) {
+function selDirectorio ($unidad, $desc) {
     [Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") | Out-Null
     [System.Windows.Forms.Application]::EnableVisualStyles()
     $browse = New-Object System.Windows.Forms.FolderBrowserDialog
     $browse.SelectedPath = $unidad
     $browse.ShowNewFolderButton = $false
-    $browse.Description = "Elija un directorio"
+    $browse.Description = $desc
     $loop = $true
     while($loop) {
         if ($browse.ShowDialog() -eq "OK") {
@@ -72,22 +72,31 @@ function selFile ($unidad) {
     $LogNamePre = "LOG-COPIA-"
     $prefijo    = "D:\miData\Hostalia\bankiaAD"
     $logDIR     = $prefijo + "\LOG\"
+    #   Lee el fichero de maquinas:
+    $maquinaXML="D:\miData\Hostalia\bankiaAD\scripts\maquinasXSO.xml"
+    $xdoc=New-Object System.Xml.XmlDataDocument
+    $fileXML=$maquinaXML
+    [xml]$xdoc=get-content $fileXML
 #
 # --------------------------------------------------------------------------------------------------------------------------------
 #   SCRIPT MAIN BODY - START
 # --------------------------------------------------------------------------------------------------------------------------------
 #
     # Seleccionamos el directorio origen (local)
-    $iData1 = selDirectorio "D:\tmp\test"
-    # $iData1 = selFile "X:\SOFT"
+    $iData1 = selDirectorio "D:\miData\Hostalia\bankiaAD\HTML" "Directorio por defecto: D:\miData\Hostalia\bankiaAD\HTML"
+
     if ($iData1 -eq "NoSel") {
         $texto="Error: No se ha seleccionado ningún directorio local CANCELAMOS EL PROCESO"
         write-log -Text $texto -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "=== F I N ==="
         exit 0
     }
-    $fdOri1Tmp = $iData1.replace(":","$")
-    $fdOri1 = "\\$maqLOCAL\$fdOri1Tmp"
-    $data = obtieneDatos $xDoc $idata1
+    $iData2 = selDirectorio "H:\xampp\htdocs\web\bankiaAD\HTML" "Directorio por defecto: H:\xampp\htdocs\web\bankiaAD\HTML"
+    if ($iData2 -eq "NoSel") {
+        $texto="Error: No se ha seleccionado ningún directorio local CANCELAMOS EL PROCESO"
+        write-log -Text $texto -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "=== F I N ==="
+        exit 0
+    }
+    $data = obtieneDatos $idata1 $idata2
     if ($Data[0] -eq "0") {
         $texto="Error: datos incorrectos, CANCELAMOS EL PROCESO"
         write-log -Text $texto -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "=== F I N ==="

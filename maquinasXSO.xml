@@ -1,0 +1,39 @@
+<?xml version="1.0" standalone="yes"?>
+<Maquinas>
+  <Dato>
+    <Activa>@SI</Activa>
+    <Server>CSS</Server>
+    <Grupo>G0</Grupo>
+    <Observaciones />
+  </Dato>
+  <Dato>
+    <Activa>@SI</Activa>
+    <Server>icon</Server>
+    <Grupo>G0</Grupo>
+    <Observaciones />
+  </Dato>
+  <Dato>
+    <Activa>@SI</Activa>
+    <Server>Images</Server>
+    <Grupo>G0</Grupo>
+    <Observaciones />
+  </Dato>
+  <Dato>
+    <Activa>@SI</Activa>
+    <Server>salida</Server>
+    <Grupo>G0</Grupo>
+    <Observaciones />
+  </Dato>
+  <Dato>
+    <Activa>@SI</Activa>
+    <Server>src</Server>
+    <Grupo>G0</Grupo>
+    <Observaciones />
+  </Dato>
+  <Dato>
+    <Activa>@SI</Activa>
+    <Server>HTML</Server>
+    <Grupo>G0</Grupo>
+    <Observaciones />
+  </Dato>
+</Maquinas>
