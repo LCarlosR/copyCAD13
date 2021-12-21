@@ -113,20 +113,13 @@ function obtieneDatos ($dirOri, $dirDest) {
         ####  [void] $Form.ShowDialog()
         #
         # $res1=$listbox.SelectedItems
-        $res1=$dataGridView1.SelectedCells
-        if ($res1.count -gt 0) {
-            $dimen = $res1.count + 4
-            $res = New-Object string[] $dimen
-            if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
-                $res[0] = $tB1.Text  # Directorio origen  
-                $res[1] = $tB2.Text  # Directorio destino
-            } else {
-                $res[0] = "0"  
-                $res[1] = "0"  
-            }
+        $res = New-Object string[] $dimen
+        if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
+            $res[0] = $tB1.Text  # Directorio origen  
+            $res[1] = $tB2.Text  # Directorio destino
         } else {
-            $res = New-Object string[] 1
             $res[0] = "0"  
+            $res[1] = "0"  
         }
         return $res
     }
