@@ -216,6 +216,7 @@ function obtieneDatos ($maquinas, $dirOri) {
         $exeButton.Add_Click({cargaDatosMaquinas $maquinas}) 
         #$exeButton.Click({cargaDatosMaquinas $maquinas}) 
         $Form.Controls.Add($exeButton) 
+        <# quitamos la visualización de servidores 
         # New-1
         # Cuadro para mostrar los servidores
         $dataGridView1 = New-Object System.Windows.Forms.DataGridView
@@ -227,6 +228,7 @@ function obtieneDatos ($maquinas, $dirOri) {
         $dataGridView1.Name = "SERVIDORES"
         $form.Controls.Add($dataGridView1) 
         # New-1
+        #>
         #
         $form.Topmost = $True
         $result = $form.ShowDialog() # Lo muestra modal.
