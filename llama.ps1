@@ -1,5 +1,6 @@
 #
 Import-Module D:\data\PS\TOOLS\write-Log.psm1
+Import-Module D:\miData\Hostalia\bankiaAD\scripts\IG-01.psm1
 #
 # Selecciona un fichero
 Function Get-FileName($initialDirectory) {
@@ -77,7 +78,7 @@ function selFile ($unidad) {
 # --------------------------------------------------------------------------------------------------------------------------------
 #
     # Seleccionamos el directorio origen (local)
-    $iData1 = selDirectorio "X:\SOFT"
+    $iData1 = selDirectorio "D:\tmp\test"
     # $iData1 = selFile "X:\SOFT"
     if ($iData1 -eq "NoSel") {
         $texto="Error: No se ha seleccionado ningún directorio local CANCELAMOS EL PROCESO"
