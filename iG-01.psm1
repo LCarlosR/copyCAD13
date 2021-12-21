@@ -216,7 +216,7 @@ function obtieneDatos ($maquinas, $dirOri) {
         $exeButton.Add_Click({cargaDatosMaquinas $maquinas}) 
         #$exeButton.Click({cargaDatosMaquinas $maquinas}) 
         $Form.Controls.Add($exeButton) 
-        <# quitamos la visualización de servidores 
+        #<# quitamos la visualización de servidores 
         # New-1
         # Cuadro para mostrar los servidores
         $dataGridView1 = New-Object System.Windows.Forms.DataGridView
