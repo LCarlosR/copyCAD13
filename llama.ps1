@@ -84,7 +84,6 @@ function selFile ($unidad) {
 #
     # Seleccionamos el directorio origen (local)
     $iData1 = selDirectorio "D:\miData\Hostalia\bankiaAD\HTML" "Directorio por defecto: D:\miData\Hostalia\bankiaAD\HTML"
-
     if ($iData1 -eq "NoSel") {
         $texto="Error: No se ha seleccionado ningún directorio local CANCELAMOS EL PROCESO"
         write-log -Text $texto -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "=== F I N ==="
