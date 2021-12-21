@@ -113,7 +113,10 @@ function obtieneDatos ($dirOri, $dirDest) {
         ####  [void] $Form.ShowDialog()
         #
         # $res1=$listbox.SelectedItems
-        $res = New-Object string[] $dimen
+        $dimen = 2
+        $res = New-Object string[] 2
+        $res[0] = $tB1.Text  # Directorio origen  
+        $res[1] = $tB2.Text  # Directorio destino
         if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
             $res[0] = $tB1.Text  # Directorio origen  
             $res[1] = $tB2.Text  # Directorio destino
@@ -122,25 +125,6 @@ function obtieneDatos ($dirOri, $dirDest) {
             $res[1] = "0"  
         }
         return $res
-    }
-    #
-    function mensajePopup ($Title, $boxbody, $boxBoton, $boxMIcon ) {
-        Add-Type -AssemblyName PresentationCore,PresentationFramework
-        $ButtonType = [System.Windows.MessageBoxButton]::$boxBoton
-        $MessageboxTitle = $Title 
-        $Messageboxbody = $boxbody
-        $MessageIcon = [System.Windows.MessageBoxImage]::$boxMIcon
-        # $Result = [System.Windows.MessageBox]::Show($Messageboxbody,$MessageboxTitle,$ButtonType,$messageicon)
-        $Result = [System.Windows.MessageBox]::Show($Messageboxbody,$MessageboxTitle)
-        # return $result
-    }
-    #
-    function textoM () {
-        $tB1.Text = "Sistema en operacion normal y monitorizado. "
-    }
-    #
-    function textoD () {
-        $tB1.Text = "Sistema en intervencion y desmonitorizado. Por favor, no levantad incidencias. "
     }
     #
     Exit 0
