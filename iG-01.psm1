@@ -22,15 +22,15 @@ function obtieneDatos ($dirOri, $dirDest) {
         $Form = New-Object System.Windows.Forms.Form    
         $form.StartPosition = "Manual"
         $form.Location = New-Object System.Drawing.Point(55,5)
-        $form.Size = New-Object System.Drawing.Size(700,720) 
-        $form.Text = "LCR Copia un directorio local maquinas remotas"
+        $form.Size = New-Object System.Drawing.Size(350,400) 
+        $form.Text = "Copia de fuentes a Test Local de CAD13"
     #   #
     # $OKButton_OnClick= { $Form.Close() }
         #
         # Add-Type -AssemblyName System.Windows.Forms
         # Add-Type -AssemblyName System.Drawing
-        $x1=10; $x2=290
-        $xbO=400; $ybO=635; $xbC=$xbO + 85; $xbh=$xbc + 85; $ybC=$ybO
+        $x1=10; $x2=10
+        $xbO=40; $ybO=635; $xbC=$xbO + 85; $xbh=$xbc + 85; $ybC=$ybO
         # X1 $form = New-Object System.Windows.Forms.Form 
         # $form.StartPosition = "CenterScreen"
         #
@@ -72,16 +72,15 @@ function obtieneDatos ($dirOri, $dirDest) {
         #
         # Etiqueta de textBox1
         $lB1 = New-Object System.Windows.Forms.Label
-        # $lB1.Location = New-Object System.Drawing.Point($x2,225) 
-        $lB1.Location = New-Object System.Drawing.Point($x2,425) 
+        $lB1.Location = New-Object System.Drawing.Point($x2,150) 
         $lB1.Size = New-Object System.Drawing.Size(300,20) 
-        $lB1.Text = "Directorio origen (Obligatorio Opciones 1,2,3)"
+        $lB1.Text = "Directorio origen (No modificable)"
         $form.Controls.Add($lB1)
         #> 
         # textBox1
         # Cuadro de texto no modificables para mostrar el directorio origen
         $tB1 = New-Object System.Windows.Forms.TextBox 
-        $tB1.Location = New-Object System.Drawing.Point($x2,450) # ($x2,60) 
+        $tB1.Location = New-Object System.Drawing.Point($x2,250) # ($x2,60) 
         $tB1.Multiline="TRUE"
         $tb1.ReadOnly="TRUE"
         $tB1.Size = New-Object System.Drawing.Size(290,40) # (290,30) 
@@ -92,7 +91,7 @@ function obtieneDatos ($dirOri, $dirDest) {
         $lB2 = New-Object System.Windows.Forms.Label
         $lB2.Location = New-Object System.Drawing.Point($x2,510) 
         $lB2.Size = New-Object System.Drawing.Size(300,30) 
-        $lB2.Text = "Directorio en destino (debe comenzar con <Unidad:\?> (Obligatorio Opciones 1,2,3,4))"
+        $lB2.Text = "Directorio en destino (Obligatorio)"
         $form.Controls.Add($lB2)
         #> 
         # textBox2
@@ -104,7 +103,49 @@ function obtieneDatos ($dirOri, $dirDest) {
         $tB2.Text = "$dirDest"
         # $tB2.Text = ""
         $form.Controls.Add($tB2)
-        #>
+        # Cuadro de opciones groupbox2
+        $groupBox2 = New-Object System.Windows.Forms.GroupBox
+        $groupBox2.Location = New-Object System.Drawing.Size($x2,150) # (80,5) 
+        $groupBox2.size = New-Object System.Drawing.Size(385,130) 
+        $groupBox2.text = "Acción: " 
+        $Form.Controls.Add($groupBox2) 
+        #
+        $rB1 = New-Object System.Windows.Forms.RadioButton
+        $rB1.Location = New-Object System.Drawing.Point(20,20) 
+        $rB1.Size = New-Object System.Drawing.Size(85,20) 
+        $rB1.Text = "1. HTML"
+        $rB1.Checked = $true
+        # $rb1.Add_Click({textoM}) 
+        $groupBox2.Controls.Add($rB1)
+        #
+        $rB3 = New-Object System.Windows.Forms.RadioButton
+        $rB3.Location = New-Object System.Drawing.Point(150,20) 
+        $rB3.Size = New-Object System.Drawing.Size(80,20) 
+        $rB3.Text = "2. SRC"
+        $rB3.Checked = $false
+        # $rb3.Add_Click({textoD}) 
+        $groupBox2.Controls.Add($rB3)
+        #
+        $rB5 = New-Object System.Windows.Forms.RadioButton
+        $rB5.Location = New-Object System.Drawing.Point(260,20) 
+        $rB5.Size = New-Object System.Drawing.Size(70,20) 
+        $rB5.Checked = $false
+        $rB5.Text = "3. CSS"
+        $groupBox2.Controls.Add($rB5)
+        #
+        $rB7 = New-Object System.Windows.Forms.RadioButton
+        $rB7.Location = New-Object System.Drawing.Point(20,60) 
+        $rB7.Size = New-Object System.Drawing.Size(130,20) 
+        $rB7.Checked = $false
+        $rB7.Text = "4. Salida"
+        $groupBox2.Controls.Add($rB7)
+        #
+        $rB9 = New-Object System.Windows.Forms.RadioButton
+        $rB9.Location = New-Object System.Drawing.Point(150,60) 
+        $rB9.Size = New-Object System.Drawing.Size(110,20) 
+        $rB9.Checked = $false
+        $rB9.Text = "5. Todo"
+        $groupBox2.Controls.Add($rB9)
         #
         $form.Topmost = $True
         $result = $form.ShowDialog() # Lo muestra modal.
@@ -113,13 +154,26 @@ function obtieneDatos ($dirOri, $dirDest) {
         ####  [void] $Form.ShowDialog()
         #
         # $res1=$listbox.SelectedItems
-        $dimen = 2
-        $res = New-Object string[] 2
+        $dimen = 3
+        $res = New-Object string[] $dimen
         $res[0] = $tB1.Text  # Directorio origen  
         $res[1] = $tB2.Text  # Directorio destino
         if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
             $res[0] = $tB1.Text  # Directorio origen  
             $res[1] = $tB2.Text  # Directorio destino
+            if ($rB1.checked) {
+                $res[2] = "1"
+            } else  {    
+                if ($rB3.checked) {
+                    $res[2] = "2"
+                } elseif ($rB5.checked) { 
+                    $res[2] = "3"
+                } elseif ($rB7.checked) {
+                    $res[2] = "4" 
+                } else {
+                    $res[2] = "5"
+                }
+            }
         } else {
             $res[0] = "0"  
             $res[1] = "0"  

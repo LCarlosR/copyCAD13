@@ -83,19 +83,22 @@ function selFile ($unidad) {
 # --------------------------------------------------------------------------------------------------------------------------------
 #
     # Seleccionamos el directorio origen (local)
-    $iData1 = selDirectorio "D:\miData\Hostalia\bankiaAD\HTML" "Directorio por defecto: D:\miData\Hostalia\bankiaAD\HTML"
+    # $iData1 = selDirectorio "D:\miData\Hostalia\bankiaAD\HTML" "Directorio por defecto: D:\miData\Hostalia\bankiaAD\HTML"
+    $iData1 = "D:\miData\Hostalia\bankiaAD\HTML" 
+    <#
     if ($iData1 -eq "NoSel") {
         $texto="Error: No se ha seleccionado ningún directorio local CANCELAMOS EL PROCESO"
         write-log -Text $texto -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "=== F I N ==="
         exit 0
     }
+    #>
     $iData2 = selDirectorio "H:\xampp\htdocs\web\bankiaAD\HTML" "Directorio por defecto: H:\xampp\htdocs\web\bankiaAD\HTML"
     if ($iData2 -eq "NoSel") {
         $texto="Error: No se ha seleccionado ningún directorio local CANCELAMOS EL PROCESO"
         write-log -Text $texto -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "=== F I N ==="
         exit 0
     }
-    $data = obtieneDatos $idata1 $idata2
+    $data = obtieneDatos $iData1 $idata2
     if ($Data[0] -eq "0") {
         $texto="Error: datos incorrectos, CANCELAMOS EL PROCESO"
         write-log -Text $texto -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "=== F I N ==="
