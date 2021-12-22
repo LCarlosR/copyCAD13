@@ -22,7 +22,7 @@ function obtieneDatos ($dirOri, $dirDest) {
         $Form = New-Object System.Windows.Forms.Form    
         $form.StartPosition = "Manual"
         $form.Location = New-Object System.Drawing.Point(55,5)
-        $form.Size = New-Object System.Drawing.Size(350,400) 
+        $form.Size = New-Object System.Drawing.Size(300,500) 
         $form.Text = "Copia de fuentes a Test Local de CAD13"
     #   #
     # $OKButton_OnClick= { $Form.Close() }
@@ -30,7 +30,7 @@ function obtieneDatos ($dirOri, $dirDest) {
         # Add-Type -AssemblyName System.Windows.Forms
         # Add-Type -AssemblyName System.Drawing
         $x1=10; $x2=10
-        $xbO=40; $ybO=635; $xbC=$xbO + 85; $xbh=$xbc + 85; $ybC=$ybO
+        $xbO=10; $ybO=435; $xbC=$xbO + 85; $xbh=$xbc + 85; $ybC=$ybO
         # X1 $form = New-Object System.Windows.Forms.Form 
         # $form.StartPosition = "CenterScreen"
         #
@@ -105,7 +105,7 @@ function obtieneDatos ($dirOri, $dirDest) {
         $form.Controls.Add($tB2)
         # Cuadro de opciones groupbox2
         $groupBox2 = New-Object System.Windows.Forms.GroupBox
-        $groupBox2.Location = New-Object System.Drawing.Size($x2,150) # (80,5) 
+        $groupBox2.Location = New-Object System.Drawing.Size($x2,75) # (80,5) 
         $groupBox2.size = New-Object System.Drawing.Size(385,130) 
         $groupBox2.text = "Acción: " 
         $Form.Controls.Add($groupBox2) 
