@@ -22,7 +22,7 @@ function obtieneDatos ($dirOri, $dirDest) {
         $Form = New-Object System.Windows.Forms.Form    
         $form.StartPosition = "Manual"
         $form.Location = New-Object System.Drawing.Point(55,5)
-        $form.Size = New-Object System.Drawing.Size(300,500) 
+        $form.Size = New-Object System.Drawing.Size(500,300) 
         $form.Text = "Copia de fuentes a Test Local de CAD13"
     #   #
     # $OKButton_OnClick= { $Form.Close() }
@@ -72,7 +72,7 @@ function obtieneDatos ($dirOri, $dirDest) {
         #
         # Etiqueta de textBox1
         $lB1 = New-Object System.Windows.Forms.Label
-        $lB1.Location = New-Object System.Drawing.Point($x2,150) 
+        $lB1.Location = New-Object System.Drawing.Point($5,5) 
         $lB1.Size = New-Object System.Drawing.Size(300,20) 
         $lB1.Text = "Directorio origen (No modificable)"
         $form.Controls.Add($lB1)
@@ -80,7 +80,7 @@ function obtieneDatos ($dirOri, $dirDest) {
         # textBox1
         # Cuadro de texto no modificables para mostrar el directorio origen
         $tB1 = New-Object System.Windows.Forms.TextBox 
-        $tB1.Location = New-Object System.Drawing.Point($x2,250) # ($x2,60) 
+        $tB1.Location = New-Object System.Drawing.Point(5,25) # ($x2,60) 
         $tB1.Multiline="TRUE"
         $tb1.ReadOnly="TRUE"
         $tB1.Size = New-Object System.Drawing.Size(290,40) # (290,30) 
@@ -89,7 +89,7 @@ function obtieneDatos ($dirOri, $dirDest) {
         #>
         # Etiqueta de textBox2
         $lB2 = New-Object System.Windows.Forms.Label
-        $lB2.Location = New-Object System.Drawing.Point($x2,510) 
+        $lB2.Location = New-Object System.Drawing.Point($x2,180) 
         $lB2.Size = New-Object System.Drawing.Size(300,30) 
         $lB2.Text = "Directorio en destino (Obligatorio)"
         $form.Controls.Add($lB2)
@@ -97,7 +97,7 @@ function obtieneDatos ($dirOri, $dirDest) {
         # textBox2
         # Cuadro de texto para pedir en directorio de destino en cada servidor
         $tB2 = New-Object System.Windows.Forms.TextBox 
-        $tB2.Location = New-Object System.Drawing.Point($x2,550) # ($x2,60) 
+        $tB2.Location = New-Object System.Drawing.Point($x2,240) # ($x2,60) 
         $tB2.Multiline="TRUE"
         $tB2.Size = New-Object System.Drawing.Size(290,40) # (290,30) 
         $tB2.Text = "$dirDest"
@@ -105,8 +105,8 @@ function obtieneDatos ($dirOri, $dirDest) {
         $form.Controls.Add($tB2)
         # Cuadro de opciones groupbox2
         $groupBox2 = New-Object System.Windows.Forms.GroupBox
-        $groupBox2.Location = New-Object System.Drawing.Size($x2,75) # (80,5) 
-        $groupBox2.size = New-Object System.Drawing.Size(385,130) 
+        $groupBox2.Location = New-Object System.Drawing.Size($x2,10) # (80,5) 
+        $groupBox2.size = New-Object System.Drawing.Size(385,110) 
         $groupBox2.text = "Acción: " 
         $Form.Controls.Add($groupBox2) 
         #
