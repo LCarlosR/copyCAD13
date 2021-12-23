@@ -5,25 +5,16 @@
 # - CAPTURA DE PANTALLAS DE SELECCIÓN DE DATOS -
 # ----------------------------------------------------------------------------------------------------------------------
 #
-#  Funcion obtiene datos 
-#  Captura entorno (Des, Int, Pro, All)
-#  Devuelve el array $res
-#  $res[0] -> [ 0 | 1 ] [ 0-> Cancelamos | 1-> hay selección ]
-#  $res[1] -> Directorio del destino remoro
-#  $res[2] -> [Combinar|Sustituir|Borrar]
-#  $res[3] -> DSAPCCU1
-#  $res[4] -> DSAPDM02
-#  $res[...] -> .... tantos registros como máquinas selecionadas
-#
 function obtieneDatos ($dirOri, $dirDest) {
     #   #
         [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing") 
         [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")  
         $Form = New-Object System.Windows.Forms.Form    
         $form.StartPosition = "Manual"
-        $form.Location = New-Object System.Drawing.Point(55,5)
-        $form.Size = New-Object System.Drawing.Size(500,300) 
+        $form.Location = New-Object System.Drawing.Point(255,200)
+        $form.Size = New-Object System.Drawing.Size(380,350) 
         $form.Text = "Copia de fuentes a Test Local de CAD13"
+        $form.BackColor = "BlanchedAlmond"
     #   #
     # $OKButton_OnClick= { $Form.Close() }
         #
@@ -33,10 +24,10 @@ function obtieneDatos ($dirOri, $dirDest) {
         $xbO=10; $ybO=435; $xbC=$xbO + 85; $xbh=$xbc + 85; $ybC=$ybO
         # X1 $form = New-Object System.Windows.Forms.Form 
         # $form.StartPosition = "CenterScreen"
-        #
+        # -------------------------------------------------------------------------------------------------------------
         # Boton 1 -> OK
         $OKButton = New-Object System.Windows.Forms.Button
-        $OKButton.Location = New-Object System.Drawing.Point($xbO,$ybO)
+        $OKButton.Location = New-Object System.Drawing.Point(110,270)
         $OKButton.Size = New-Object System.Drawing.Size(75,23)
         $OKButton.Text = "OK"
         $OKButton.BackColor = "Green" 
@@ -47,7 +38,7 @@ function obtieneDatos ($dirOri, $dirDest) {
         #
         # Boton 2 -> Cancel
         $CancelButton = New-Object System.Windows.Forms.Button
-        $CancelButton.Location = New-Object System.Drawing.Point($xbC,$ybC)
+        $CancelButton.Location = New-Object System.Drawing.Point(195,270)
         $CancelButton.Size = New-Object System.Drawing.Size(75,23)
         $CancelButton.Text = "Cancel"
         $CancelButton.BackColor = "Red" 
@@ -69,11 +60,11 @@ function obtieneDatos ($dirOri, $dirDest) {
         $form.helpButton = $helpButton
         $form.Controls.Add($helpButton)
         #>
-        #
+        # -------------------------------------------------------------------------------------------------------------
         # Etiqueta de textBox1
         $lB1 = New-Object System.Windows.Forms.Label
-        $lB1.Location = New-Object System.Drawing.Point($5,5) 
-        $lB1.Size = New-Object System.Drawing.Size(300,20) 
+        $lB1.Location = New-Object System.Drawing.Point(5,5) 
+        $lB1.Size = New-Object System.Drawing.Size(350,20) 
         $lB1.Text = "Directorio origen (No modificable)"
         $form.Controls.Add($lB1)
         #> 
@@ -83,30 +74,31 @@ function obtieneDatos ($dirOri, $dirDest) {
         $tB1.Location = New-Object System.Drawing.Point(5,25) # ($x2,60) 
         $tB1.Multiline="TRUE"
         $tb1.ReadOnly="TRUE"
-        $tB1.Size = New-Object System.Drawing.Size(290,40) # (290,30) 
+        $tB1.Size = New-Object System.Drawing.Size(350,40) # (290,30) 
         $tB1.Text = "$dirOri"
         $form.Controls.Add($tB1) 
         #>
         # Etiqueta de textBox2
         $lB2 = New-Object System.Windows.Forms.Label
-        $lB2.Location = New-Object System.Drawing.Point($x2,180) 
-        $lB2.Size = New-Object System.Drawing.Size(300,30) 
+        $lB2.Location = New-Object System.Drawing.Point(5,80) 
+        $lB2.Size = New-Object System.Drawing.Size(350,20) 
         $lB2.Text = "Directorio en destino (Obligatorio)"
         $form.Controls.Add($lB2)
         #> 
         # textBox2
         # Cuadro de texto para pedir en directorio de destino en cada servidor
         $tB2 = New-Object System.Windows.Forms.TextBox 
-        $tB2.Location = New-Object System.Drawing.Point($x2,240) # ($x2,60) 
+        $tB2.Location = New-Object System.Drawing.Point(5,100) # ($x2,60) 
         $tB2.Multiline="TRUE"
-        $tB2.Size = New-Object System.Drawing.Size(290,40) # (290,30) 
+        $tB2.Size = New-Object System.Drawing.Size(350,40) # (290,30) 
         $tB2.Text = "$dirDest"
         # $tB2.Text = ""
         $form.Controls.Add($tB2)
+        # -------------------------------------------------------------------------------------------------------------        
         # Cuadro de opciones groupbox2
         $groupBox2 = New-Object System.Windows.Forms.GroupBox
-        $groupBox2.Location = New-Object System.Drawing.Size($x2,10) # (80,5) 
-        $groupBox2.size = New-Object System.Drawing.Size(385,110) 
+        $groupBox2.Location = New-Object System.Drawing.Size(5,150) # (80,5) 
+        $groupBox2.size = New-Object System.Drawing.Size(355,100) 
         $groupBox2.text = "Acción: " 
         $Form.Controls.Add($groupBox2) 
         #

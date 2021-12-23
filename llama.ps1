@@ -100,7 +100,7 @@ function selFile ($unidad) {
     }
     $data = obtieneDatos $iData1 $idata2
     if ($Data[0] -eq "0") {
-        $texto="Error: datos incorrectos, CANCELAMOS EL PROCESO"
+        $texto="Proceso cancelado por el usuario"
         write-log -Text $texto -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "=== F I N ==="
         exit 0
     }
