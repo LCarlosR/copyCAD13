@@ -40,6 +40,27 @@ Import-Module D:\miData\Hostalia\bankiaAD\scripts\IG-01.psm1
 # - FUNCTIONS - STARTS -
 # -------------------------------------------------------------------------------------------------------------------------------------------------
 #
+function selDirectorio ($unidad, $desc) {
+    [Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") | Out-Null
+    [System.Windows.Forms.Application]::EnableVisualStyles()
+    $browse = New-Object System.Windows.Forms.FolderBrowserDialog
+    $browse.SelectedPath = $unidad
+    $browse.ShowNewFolderButton = $false
+    $browse.Description = $desc
+    $loop = $true
+    while($loop) {
+        if ($browse.ShowDialog() -eq "OK") {
+            $loop = $false 
+        } else {
+            $res = [System.Windows.Forms.MessageBox]::Show("Has tecleado cancelar. Deseas reintentarlo o salir?", "Elija un directorio", [System.Windows.Forms.MessageBoxButtons]::RetryCancel)
+            if ($res -eq "Cancel") {
+                return "NoSel"      #Ends script
+            }
+        }
+    }
+    $browse.SelectedPath
+    $browse.Dispose()
+}
 Function iniFecha ($dias) {
     [dateTime]$fechaActTemp = (Get-date).AddDays(-$dias)
     $fechaAct = $fechaActTemp
@@ -47,17 +68,6 @@ Function iniFecha ($dias) {
     $fechaAct = $fechaAct.addMinutes(-($fechaActTemp).Minute)
     $fechaAct = $fechaAct.addSeconds(-($fechaActTemp).Second)
     return $fechaAct
-}
-# Validamos que exista el fichero de datos
-Function verificarOrigen ($salIn) {
-    $codSalida = 0
-    if ( Test-Path $salIn ) {  # Existe el fichero de configuración
-            write-log -Text "Existe: $salIn" -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "0.-Check-File" 
-    } else { # No Existe el fichero de configuración abortamos
-            write-log -Text "Abortamos NO existe: $salIn" -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "0.-Check-File-Error" 
-            $codSalida = 1
-    }
-    return $codSalida
 }
 #
 Function verificarObjeto ($salOut, $crearSalida) { 
@@ -126,9 +136,10 @@ Function copiamos ($fileOri, $fileDest) {
     # El dígito representa el número de dias a barrer hacia atras. 0 -> Hoy a las 00:00:00, 3 -> desde hace 3 días a las 00:00:00
         [dateTime]$fechaAct = iniFecha 1   
     # $fechaActAll = (Get-date).AddDays(-5000)
-    $LogNamePre = "LOG-COPIA-"
-    $prefijo    = "D:\miData\Hostalia\bankiaAD"
-    $logDIR     = $prefijo + "\LOG\"
+    $LogNamePre    = "LOG-COPIA-"
+    $prefijo       = "D:\miData\Hostalia\bankiaAD"
+    $logDIR        = $prefijo + "\LOG\"
+    [int]$numDias   = 1 # Numero de dias de antigueduedad de la modificación de los ficheros a copiar
     #
     # -------------------------------------------------------------------------------------------------------------------------------------------------
     # - Ficheros de CODIGO FUENTE HTML -
@@ -139,6 +150,21 @@ Function copiamos ($fileOri, $fileDest) {
     write-log -Text "----------- Nuevo LOG ------- " -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "--------- Iniciamos"      
     [string]$inEco   = "D:\miData\Hostalia\bankiaAD\HTML\"
     [string]$outEco  = "H:\xampp\htdocs\web\bankiaAD\HTML\"
+    # Asignamos el directorio origen (no modificable en el formulario)
+    $outEco = selDirectorio $outEco "Directorio por defecto: $outEco"
+    if ($outEco -eq "NoSel") {
+        $texto="Error: No se ha seleccionado ningún directorio cancelamos el proceso"
+        write-log -Text $texto -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "=== F I N ==="
+        exit 0
+    }
+    $data = obtieneDatos $inEco $outEco
+    if ($Data[0] -eq "0") {
+        $texto="Proceso cancelado por el usuario"
+        write-log -Text $texto -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "=== F I N ==="
+        exit 0
+    }
+    $numDias = $data[3]
+    [string]$miOpcion = $data[3]
     # Verificamos si están los datos del mes y año, en curso ambos
     $retorno = verificarObjeto $inEco 0
     if ($retorno -ne 0) {
@@ -146,12 +172,13 @@ Function copiamos ($fileOri, $fileDest) {
         exit 0
     }
     # Verificamos si existe el directorio de destino, si no existe los creamos, si falla la creación abortamos
-    $retorno = verificarObjeto $outEco 1
+    $retorno = verificarObjeto $outEco $numDias
     if ($retorno -ne 0) {
         write-log -Text "Abortamos NO existe: $outEco" -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "5.-Check-File-Error" 
         exit 0
     }
-    # Copiamos solo los ficheros actualizazos hoy, si quermos todos utilizar $fechaActAll
+    # Copiamos Según las opciones
+    # Copiamos solo los ficheros actualizazos hoy, si queremos todos utilizar $fechaActAll
     $filesRaizXamp = "H:\xampp\htdocs\web\bankiaAD"
     $filesRaizDelimitador = "bankiaAD"
     $filesEco = filesMod $inEco $fechaAct
@@ -160,3 +187,26 @@ Function copiamos ($fileOri, $fileDest) {
         aCopiar $filesEco $filesRaizXamp $filesRaizDelimitador
     }
     write-log -Text "*********** FIN LOG ******** " -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "*************** FIN **************"  
+#-----------------------------------------------------------------------------------------------------------------------------------------------------
+# 1: HTML (default) # 2: SRC # 3: CSS # 4: Salida # 5: Todo  
+
+    # El dígito representa el número de dias a barrer hacia atras. 0 -> Hoy a las 00:00:00, 3 -> desde hace 3 días a las 00:00:00
+    [dateTime]$fechaAct = iniFecha 1  
+    switch ($miOpcion) {
+        "1" # solo copiamos los htmls ue hay en el raiz a destino
+        {
+
+        }
+        "2" 
+        {
+        }
+        "3" 
+        {
+        }
+        "4" 
+        {
+        }
+        "5" 
+        {
+        }
+    }

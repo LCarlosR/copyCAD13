@@ -16,14 +16,6 @@ function obtieneDatos ($dirOri, $dirDest) {
         $form.Text = "Copia de fuentes a Test Local de CAD13"
         $form.BackColor = "BlanchedAlmond"
     #   #
-    # $OKButton_OnClick= { $Form.Close() }
-        #
-        # Add-Type -AssemblyName System.Windows.Forms
-        # Add-Type -AssemblyName System.Drawing
-        $x1=10; $x2=10
-        $xbO=10; $ybO=435; $xbC=$xbO + 85; $xbh=$xbc + 85; $ybC=$ybO
-        # X1 $form = New-Object System.Windows.Forms.Form 
-        # $form.StartPosition = "CenterScreen"
         # -------------------------------------------------------------------------------------------------------------
         # Boton 1 -> OK
         $OKButton = New-Object System.Windows.Forms.Button
@@ -46,37 +38,38 @@ function obtieneDatos ($dirOri, $dirDest) {
         $form.CancelButton = $CancelButton
         $form.Controls.Add($CancelButton)
         #
-        <#    
-        # Boton 3 -> Help
-        $Title="123"; $boxbody="456"; $boxBoton="None"; $boxMIconV="Cancel"
-        #
-        $helpButton = New-Object System.Windows.Forms.Button
-        $helpButton.Location = New-Object System.Drawing.Point($xbh,$ybC)
-        $helpButton.Size = New-Object System.Drawing.Size(75,23)
-        $helpButton.Text = "Help"
-        $helpButton.BackColor = "Red" 
-        $helpButton.DialogResult = [System.Windows.Forms.DialogResult]::None
-        $helpButton.Add_Click({mensajePopup $Title $boxbody $boxBoton $boxMIcon}) 
-        $form.helpButton = $helpButton
-        $form.Controls.Add($helpButton)
-        #>
         # -------------------------------------------------------------------------------------------------------------
         # Etiqueta de textBox1
         $lB1 = New-Object System.Windows.Forms.Label
         $lB1.Location = New-Object System.Drawing.Point(5,5) 
-        $lB1.Size = New-Object System.Drawing.Size(350,20) 
+        $lB1.Size = New-Object System.Drawing.Size(300,20) 
         $lB1.Text = "Directorio origen (No modificable)"
         $form.Controls.Add($lB1)
         #> 
         # textBox1
         # Cuadro de texto no modificables para mostrar el directorio origen
         $tB1 = New-Object System.Windows.Forms.TextBox 
-        $tB1.Location = New-Object System.Drawing.Point(5,25) # ($x2,60) 
+        $tB1.Location = New-Object System.Drawing.Point(5,25) 
         $tB1.Multiline="TRUE"
         $tb1.ReadOnly="TRUE"
-        $tB1.Size = New-Object System.Drawing.Size(350,40) # (290,30) 
+        $tB1.Size = New-Object System.Drawing.Size(300,40) 
         $tB1.Text = "$dirOri"
         $form.Controls.Add($tB1) 
+        #>
+        # Etiqueta de dias
+        $lD3 = New-Object System.Windows.Forms.Label
+        $lD3.Location = New-Object System.Drawing.Point(310,25) 
+        $lD3.Size = New-Object System.Drawing.Size(50,15) 
+        $lD3.Text = "N. Dias"
+        $form.Controls.Add($lD3)
+        #> 
+        # textBoxDias
+        # Cuadro de texto no modificables para mostrar el directorio origen
+        $tD3 = New-Object System.Windows.Forms.TextBox 
+        $tD3.Location = New-Object System.Drawing.Point(310,45) 
+        $tD3.Size = New-Object System.Drawing.Size(50,20) 
+        $tD3.Text = "1"
+        $form.Controls.Add($tD3) 
         #>
         # Etiqueta de textBox2
         $lB2 = New-Object System.Windows.Forms.Label
@@ -146,25 +139,26 @@ function obtieneDatos ($dirOri, $dirDest) {
         ####  [void] $Form.ShowDialog()
         #
         # $res1=$listbox.SelectedItems
-        $dimen = 3
+        $dimen = 4
         $res = New-Object string[] $dimen
         $res[0] = $tB1.Text  # Directorio origen  
         $res[1] = $tB2.Text  # Directorio destino
         if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
             $res[0] = $tB1.Text  # Directorio origen  
             $res[1] = $tB2.Text  # Directorio destino
+            $res[2] = $tD3.Text  # Número de días de antiguedad
             if ($rB1.checked) {
-                $res[2] = "1"
+                $res[3] = "1"
             } else  {    
                 if ($rB3.checked) {
-                    $res[2] = "2"
+                    $res[3] = "2"
                 } elseif ($rB5.checked) { 
-                    $res[2] = "3"
+                    $res[3] = "3"
                 } elseif ($rB7.checked) {
-                    $res[2] = "4" 
+                    $res[3] = "4" 
                 } else {
-                    $res[2] = "5"
-                }
+                    $res[3] = "5"
+                } 
             }
         } else {
             $res[0] = "0"  
