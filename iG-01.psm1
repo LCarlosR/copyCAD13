@@ -11,15 +11,16 @@ function obtieneDatos ($dirOri, $dirDest) {
         [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")  
         $Form = New-Object System.Windows.Forms.Form    
         $form.StartPosition = "Manual"
-        $form.Location = New-Object System.Drawing.Point(255,200)
-        $form.Size = New-Object System.Drawing.Size(380,350) 
+        $form.Location = New-Object System.Drawing.Point(255,100)
+        # $form.Size = New-Object System.Drawing.Size(380,350) 
+        $form.Size = New-Object System.Drawing.Size(380,525) 
         $form.Text = "Copia de fuentes a Test Local de CAD13"
         $form.BackColor = "BlanchedAlmond"
     #   #
         # -------------------------------------------------------------------------------------------------------------
         # Boton 1 -> OK
         $OKButton = New-Object System.Windows.Forms.Button
-        $OKButton.Location = New-Object System.Drawing.Point(110,270)
+        $OKButton.Location = New-Object System.Drawing.Point(110,440)
         $OKButton.Size = New-Object System.Drawing.Size(75,23)
         $OKButton.Text = "OK"
         $OKButton.BackColor = "Green" 
@@ -30,7 +31,7 @@ function obtieneDatos ($dirOri, $dirDest) {
         #
         # Boton 2 -> Cancel
         $CancelButton = New-Object System.Windows.Forms.Button
-        $CancelButton.Location = New-Object System.Drawing.Point(195,270)
+        $CancelButton.Location = New-Object System.Drawing.Point(195,440)
         $CancelButton.Size = New-Object System.Drawing.Size(75,23)
         $CancelButton.Text = "Cancel"
         $CancelButton.BackColor = "Red" 
@@ -42,7 +43,7 @@ function obtieneDatos ($dirOri, $dirDest) {
         # Etiqueta de textBox1
         $lB1 = New-Object System.Windows.Forms.Label
         $lB1.Location = New-Object System.Drawing.Point(5,5) 
-        $lB1.Size = New-Object System.Drawing.Size(300,20) 
+        $lB1.Size = New-Object System.Drawing.Size(350,20) 
         $lB1.Text = "Directorio origen (No modificable)"
         $form.Controls.Add($lB1)
         #> 
@@ -52,24 +53,9 @@ function obtieneDatos ($dirOri, $dirDest) {
         $tB1.Location = New-Object System.Drawing.Point(5,25) 
         $tB1.Multiline="TRUE"
         $tb1.ReadOnly="TRUE"
-        $tB1.Size = New-Object System.Drawing.Size(300,40) 
+        $tB1.Size = New-Object System.Drawing.Size(350,40) 
         $tB1.Text = "$dirOri"
         $form.Controls.Add($tB1) 
-        #>
-        # Etiqueta de dias
-        $lD3 = New-Object System.Windows.Forms.Label
-        $lD3.Location = New-Object System.Drawing.Point(310,25) 
-        $lD3.Size = New-Object System.Drawing.Size(50,15) 
-        $lD3.Text = "N. Dias"
-        $form.Controls.Add($lD3)
-        #> 
-        # textBoxDias
-        # Cuadro de texto no modificables para mostrar el directorio origen
-        $tD3 = New-Object System.Windows.Forms.TextBox 
-        $tD3.Location = New-Object System.Drawing.Point(310,45) 
-        $tD3.Size = New-Object System.Drawing.Size(50,20) 
-        $tD3.Text = "1"
-        $form.Controls.Add($tD3) 
         #>
         # Etiqueta de textBox2
         $lB2 = New-Object System.Windows.Forms.Label
@@ -87,7 +73,17 @@ function obtieneDatos ($dirOri, $dirDest) {
         $tB2.Text = "$dirDest"
         # $tB2.Text = ""
         $form.Controls.Add($tB2)
-        # -------------------------------------------------------------------------------------------------------------        
+        # -------------------------------------------------------------------------------------------------------------
+        $cal1 = New-Object System.Windows.Forms.MonthCalendar -Property @{
+            ShowTodayCircle   = $false
+            ShowWeekNumbers = $true
+            MaxSelectionCount = 1
+        }
+        $cal1.Location = New-Object System.Drawing.Point(95, 260)
+        $form.Controls.Add($cal1)     
+        
+        # -------------------------------------------------------------------------------------------------------------   
+
         # Cuadro de opciones groupbox2
         $groupBox2 = New-Object System.Windows.Forms.GroupBox
         $groupBox2.Location = New-Object System.Drawing.Size(5,150) # (80,5) 
@@ -139,6 +135,10 @@ function obtieneDatos ($dirOri, $dirDest) {
         ####  [void] $Form.ShowDialog()
         #
         # $res1=$listbox.SelectedItems
+        if ([int]$tD3.Text -lt 0 -or [int]$tD3.Text -gt 100) {
+            Write-Host "Fuera de rango"
+        }
+        #
         $dimen = 4
         $res = New-Object string[] $dimen
         $res[0] = $tB1.Text  # Directorio origen  
@@ -146,7 +146,11 @@ function obtieneDatos ($dirOri, $dirDest) {
         if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
             $res[0] = $tB1.Text  # Directorio origen  
             $res[1] = $tB2.Text  # Directorio destino
-            $res[2] = $tD3.Text  # Número de días de antiguedad
+            if ($cal1.SelectionStart -gt (get-Date)) {
+                $res[2] = (get-Date)
+            } else {
+                $res[2] = $cal1.SelectionStart  # Fecha de antiguedad
+            }
             if ($rB1.checked) {
                 $res[3] = "1"
             } else  {    
@@ -168,3 +172,15 @@ function obtieneDatos ($dirOri, $dirDest) {
     }
     #
     Exit 0
+    #
+function mensajePopup ($Title, $boxbody, $boxBoton, $boxMIcon ) {
+    Add-Type -AssemblyName PresentationCore,PresentationFramework
+    $ButtonType = [System.Windows.MessageBoxButton]::$boxBoton
+    $MessageboxTitle = $Title 
+    $Messageboxbody = $boxbody
+    $MessageIcon = [System.Windows.MessageBoxImage]::$boxMIcon
+    # $Result = [System.Windows.MessageBox]::Show($Messageboxbody,$MessageboxTitle,$ButtonType,$messageicon)
+    $Result = [System.Windows.MessageBox]::Show($Messageboxbody,$MessageboxTitle)
+    # return $result
+}
+#

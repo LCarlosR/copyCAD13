@@ -188,6 +188,9 @@ Function copiamos ($fileOri, $fileDest) {
     }
     write-log -Text "*********** FIN LOG ******** " -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "*************** FIN **************"  
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
+foreach ($x in $data) {
+    write-host $x
+}
 # 1: HTML (default) # 2: SRC # 3: CSS # 4: Salida # 5: Todo  
 
     # El dígito representa el número de dias a barrer hacia atras. 0 -> Hoy a las 00:00:00, 3 -> desde hace 3 días a las 00:00:00
