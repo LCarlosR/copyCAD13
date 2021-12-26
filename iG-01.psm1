@@ -125,8 +125,15 @@ function obtieneDatos ($dirOri, $dirDest) {
         $rB9.Location = New-Object System.Drawing.Point(150,60) 
         $rB9.Size = New-Object System.Drawing.Size(110,20) 
         $rB9.Checked = $false
-        $rB9.Text = "5. Todo"
+        $rB9.Text = "5. Listar"
         $groupBox2.Controls.Add($rB9)
+        #
+        $rB11 = New-Object System.Windows.Forms.RadioButton
+        $rB11.Location = New-Object System.Drawing.Point(260,60) 
+        $rB11.Size = New-Object System.Drawing.Size(110,20) 
+        $rB11.Checked = $false
+        $rB11.Text = "6. Todo"
+        $groupBox2.Controls.Add($rB11)
         #
         $form.Topmost = $True
         $result = $form.ShowDialog() # Lo muestra modal.
@@ -153,17 +160,17 @@ function obtieneDatos ($dirOri, $dirDest) {
             }
             if ($rB1.checked) {
                 $res[3] = "1"
-            } else  {    
-                if ($rB3.checked) {
-                    $res[3] = "2"
-                } elseif ($rB5.checked) { 
-                    $res[3] = "3"
-                } elseif ($rB7.checked) {
-                    $res[3] = "4" 
-                } else {
-                    $res[3] = "5"
-                } 
-            }
+            } elseif ($rB3.checked)  {    
+                $res[3] = "2"
+            } elseif ($rB5.checked) { 
+                $res[3] = "3"
+            } elseif ($rB7.checked) {
+                $res[3] = "4" 
+            } elseif ($rB9.checked) {
+                $res[3] = "5"
+            } else {
+                $res[3] = "6"
+            } 
         } else {
             $res[0] = "0"  
             $res[1] = "0"  
