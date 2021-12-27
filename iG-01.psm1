@@ -69,6 +69,7 @@ function obtieneDatos ($dirOri, $dirDest) {
         $tB2 = New-Object System.Windows.Forms.TextBox 
         $tB2.Location = New-Object System.Drawing.Point(5,100) # ($x2,60) 
         $tB2.Multiline="TRUE"
+        $tb1.ReadOnly="TRUE"
         $tB2.Size = New-Object System.Drawing.Size(350,40) # (290,30) 
         $tB2.Text = "$dirDest"
         # $tB2.Text = ""
