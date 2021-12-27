@@ -152,12 +152,12 @@ Function copiamos ($fileOri, $fileDest) {
     # [string]$outEco  = "C:\web\"
     # Asignamos el directorio origen (no modificable en el formulario)
     <#
-    $outEco = selDirectorio $outEco "Directorio por defecto: $outEco"
-    if ($outEco -eq "NoSel") {
-        $texto="Error: No se ha seleccionado ningún directorio cancelamos el proceso"
-        write-log -Text $texto -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "=== F I N ==="
-        exit 0
-    }
+        $outEco = selDirectorio $outEco "Directorio por defecto: $outEco"
+        if ($outEco -eq "NoSel") {
+            $texto="Error: No se ha seleccionado ningún directorio cancelamos el proceso"
+            write-log -Text $texto -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "=== F I N ==="
+            exit 0
+        }
     #>
     # $data tiene la estructura: # 1: HTML (default) # 2: SRC # 3: CSS # 4: Salida # 5: Listador # 6: Todo  
     # El dígito representa el número de dias a barrer hacia atras. 0 -> Hoy a las 00:00:00, 3 -> desde hace 3 días a las 00:00:00
