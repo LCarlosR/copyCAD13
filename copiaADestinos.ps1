@@ -93,10 +93,10 @@ Function verificarObjeto ($salOut, $crearSalida) {
 }
 #
 # Solo seleccionamos los ficheros modificados, no directorios despues de $fechaDesde
-Function haySalida ($numFiles, $rutaDest) { 
+Function haySalida ($numFiles, $rutaDest, $miOp) { 
     if ($numFiles.count -gt 0) {
         foreach ($a in $numFiles) {
-            $retorno = copiamos $a $rutaDest
+            $retorno = copiamos $a $rutaDest $miOp
             if ($retorno -ne 0) {
                 write-log -Text "No se ha podido copiar: $outEco" -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "1.1- Copia File-Error" 
             }
@@ -106,13 +106,16 @@ Function haySalida ($numFiles, $rutaDest) {
     }
 }
 #
-Function copiamos ($fileOri, $fileDest) { 
+Function copiamos ($fileOri, $fileDest, $miOp1) { 
     $codSalida = 0
-
+    $sufijo = ($fileOri.PSParentPath -split("HTML"))[1]
+    if ($miOp1 -ne "1") {
+        $fileDest = $fileDest + $sufijo + '\'
+    }
     try {
         Copy-Item -Path $fileOri.fullName -Destination $fileDest -Recurse -Force -EA stop
-            $texto = "Copiamos el objeto origen: $fileOri al destino: $fileDest"
-            write-log -Text $texto -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "1.- Copia datos "
+            $texto = "Objeto origen: <<< $fileOri -- Destino: --> $fileDest"
+            write-log -Text $texto -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase " Copiamos "
     } catch [System.ArgumentException] {
         $codSalida = 1
         write-host $Error.FullyQualifiedErrorId 
@@ -146,9 +149,9 @@ Function copiamos ($fileOri, $fileDest) {
     #*           Destino ==> H:\xampp\htdocs\web\bankiaAD\HTML\        (directorio del servidor WEB)
     # -------------------------------------------------------------------------------------------------------------------------------------------------
     #
-    write-log -Text "----------- Nuevo LOG ------- " -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "--------- Iniciamos"      
+    write-log -Text "----------- Nuevo LOG ------- " -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "--------- Iniciamos -------------"      
     [string]$inEco   = "D:\miData\Hostalia\bankiaAD\HTML\"
-    [string]$outEco  = "H:\xampp\htdocs\web\bankiaAD\HTML\"
+    [string]$outEco  = "H:\xampp\htdocs\web\bankiaAD\HTML"
     # [string]$outEco  = "C:\web\"
     # Asignamos el directorio origen (no modificable en el formulario)
     <#
@@ -187,49 +190,77 @@ Function copiamos ($fileOri, $fileDest) {
     }
     # Copiamos Según las opciones
     # Copiamos solo los ficheros actualizazos hoy, si queremos todos utilizar $fechaActAll
-
-    if ($filesEco.length -gt 0) {
-        write-log -Text "Finalizamos NO hay ficheros modificados: $inEco" -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "4.-Check-File-Error" 
-    }
-    
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 foreach ($x in $data) {
     write-host $x
 }
 # 1: HTML (default) # 2: SRC # 3: CSS # 4: Salida # 5: Listado # 6: Todo  
+#
+        # |  SI  |  SI |  SI |   SI   |  NO   |   NO   |
+        # |------|-----|-----|--------|-------|--------|
+        # | HTML | SRC | CSS | SALIDA | ICO   | IMAGES |
+        # |------|-----|-----|--------|-------|--------|
+        # | html | php | css |  html  | css	  |  jpg   |
+        # |      | js  |     |  pdf   | json  |  gif   |
+        # |      |     |     |  gif   | svg	  |  png   |
+        # |      |     |     |  jpg   | eot	  |  ico   |
+        # |      |     |     |        | ttf	  |        |
+        # |      |     |     |        | woff  |        |
+        # |      |     |     |        | woff2 |        |
+        # |------|-----|-----|--------|-------|--------|
 
     # El dígito representa el número de dias a barrer hacia atras. 0 -> Hoy a las 00:00:00, 3 -> desde hace 3 días a las 00:00:00
     # La fecha devuelta en $data[2] está en el formato "MM/DD/YYYY 00:00:00", la utilizamos para ver los ficheros actualizados desde esa fecha y hora.
     #
     switch ($miOpcion) {
-        "1" # copiamos los *.html que hay en el raiz a destino
+        "1" 
         {
             $filesEco = Get-ChildItem -Force -File -path $inEco  | Where-Object -FilterScript { $_.LastWriteTime -gt $data[2] -and ($_.name -like '*.html') }
         }
-        "2" # copiamos los *.php y *.js
+        "2" 
         {
+            $inEco = $inEco + 'src\'
             $filesEco = Get-ChildItem -Force -Recurse -File -path $inEco  | Where-Object -FilterScript { $_.LastWriteTime -gt $data[2] -and (($_.name -like '*.php') -or ($_.name -like '*.js')) }
         }
-        "3" # copiamos los *.css
+        "3" 
         {
+            $inEco = $inEco + 'css\'
             $filesEco = Get-ChildItem -Force -Recurse -File -path $inEco  | Where-Object -FilterScript { $_.LastWriteTime -gt $data[2] -and ($_.name -like '*.css') }
         }
-        "4" # copiamos lo actualizado en el directorio "salida" con extensión pdf, gif, html, jpg
+        "4" 
         {
-            $filesEco = Get-ChildItem -Force -Recurse -File -path $inEco  | Where-Object -FilterScript { $_.LastWriteTime -gt $data[2] -and (($_.name -like '*.pdf') -or ($_.name -like '*.gif') -or ($_.name -like '*.html') -or ($_.name -like '*.jpg')) }
+            $inEco = $inEco + 'salida\'
+            $filesEco = Get-ChildItem -Force -Recurse -File -path $inEco  | Where-Object -FilterScript { $_.LastWriteTime -gt $data[2] `
+                -and (($_.name -like '*.html') -or ($_.name -like '*.pdf') `
+                -or   ($_.name -like '*.gif')  -or ($_.name -like '*.jpg')) }
         }
-        "5" # creamos un listado con los objetos a modificar de extensión: php, js, pdf, gif, html, jpg
-        {   # Get-ChildItem -Path $env:ProgramFiles -Recurse -Include *.exe | Where-Object -FilterScript {($_.LastWriteTime -gt '2005-10-01') -and ($_.Length -ge 1mb) -and ($_.Length -le 10mb)}
-            $filesEco = Get-ChildItem -Force -Recurse -File -path $inEco  | Where-Object -FilterScript { $_.LastWriteTime -gt $data[2] }    
+        "5" # creamos un listado con los objetos a modificar de extensión: todas las del cuadro con cabecera SI (no se copia ningún objeto)
+        {   
+            $filesEco = Get-ChildItem -Force -Recurse -File -path $inEco  | Where-Object -FilterScript { $_.LastWriteTime -gt $data[2] `
+                -and (($_.name -like '*.html')  -or ($_.name -like '*.php') -or ($_.name -like '*.js') `
+                -or   ($_.name -like '*.css')   -or ($_.name -like '*.pdf') -or ($_.name -like '*.gif') `
+                -or   ($_.name -like '*.jpg')) }
+        }
+        "6" # copiamos todo los objetos que listaria la opción 5
+        {
+            $filesEco = Get-ChildItem -Force -Recurse -File -path $inEco  | Where-Object -FilterScript { $_.LastWriteTime -gt $data[2] `
+                -and (($_.name -like '*.html')  -or ($_.name -like '*.php') -or ($_.name -like '*.js') `
+                -or   ($_.name -like '*.css')   -or ($_.name -like '*.pdf') -or ($_.name -like '*.gif') `
+                -or   ($_.name -like '*.jpg')) }
+        }
+    }
+    if ($filesEco.count -lt 1) {
+        write-log -Text "NO hay objetos modificados: $inEco..." -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "6.-Check-Num. Files" 
+    } else {
+        if ($miOpcion -ne "5") {
+            haySalida $filesEco $outEco $miOpcion
+            $filesEco |  Format-table -property LastWriteTime, FullName
             # $sal | Out-GridView
-        }
-        "6" # copiamos todo lo anterior copciones de [1-4], es decir, el resultado de la opción 5 de extensión: php, js, pdf, gif, html, jpg
-        {
-            $filesEco = Get-ChildItem -Force -Recurse -File -path $inEco  | Where-Object -FilterScript { $_.LastWriteTime -gt $data[2] }
+        } else {
+            $filesEco |  Format-table -property LastWriteTime, FullName
+            foreach ($mFE in $filesEco) {
+                write-log -Text "Objetos modificados: $mFE " -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "7.- LISTADO " 
+            }
         }
     }
-    if ($miOpcion -ne "5") {
-        haySalida $filesEco $outEco
-    }
-    $filesEco |  Format-table -property LastWriteTime, FullName
     write-log -Text "*********** FIN LOG ******** " -LogFileDirectory $logDIR -LogFileName $LogNamePre -LogFase "*************** FIN **************"  
